@@ -411,6 +411,24 @@ def build_story(S):
         story.append(Paragraph(f"  {i}.  {item}", S["bullet"]))
 
     story.append(Spacer(1, 0.25*cm))
+    story.append(Paragraph("Prompt injection defence", S["h3"]))
+    story.append(Paragraph(
+        "Customer messages are untrusted external input — a bad actor can attempt to "
+        "hijack the model by embedding instructions inside the support ticket. "
+        "Two layers of protection are in place:",
+        S["body"]))
+    for item in [
+        "<b>System prompt security section</b> — explicitly instructs the model to "
+        "ignore any instructions embedded in customer input (jailbreak patterns, "
+        "persona swaps, off-topic requests). If detected, the model returns a polite "
+        "redirection rather than complying.",
+        "<b>XML tag framing</b> — the customer message is wrapped in "
+        "<i>&lt;customer_input&gt;</i> tags in the user message, clearly separating "
+        "untrusted data from system instructions.",
+    ]:
+        story.append(Paragraph(f"• {item}", S["bullet"]))
+
+    story.append(Spacer(1, 0.25*cm))
     story.append(Paragraph("RAG context injection", S["h3"]))
     story.append(Paragraph(
         "Before each AI call, the RAG service retrieves the three most relevant "
@@ -585,20 +603,36 @@ def build_story(S):
     story.append(SectionHeader(6, "Security Considerations"))
     story.append(Spacer(1, 0.3*cm))
     story.append(Paragraph(
-        "The current implementation covers a baseline set of security controls. "
-        "The table below shows what is in place now versus what a production "
-        "deployment would require.",
+        "The table below shows what is in place on the deployed system versus "
+        "what a full production deployment would require.",
         S["body"]))
     story.append(Spacer(1, 0.2*cm))
 
     sec_rows = [
         [H("Control"), H("Current status"), H("Production requirement")],
+        [CB("HTTPS"),
+         C("Enforced on both Netlify (frontend) and Railway (backend)."),
+         C("Same — already correct.")],
         [CB("CORS"),
-         C("Configured — only the known frontend origin is permitted."),
+         C("Locked to https://telecom-support-portal.netlify.app only."),
          C("Same, with a review process as new frontend domains are added.")],
         [CB("Input validation"),
          C("All inputs validated via Pydantic before processing."),
          C("Same — already production-grade.")],
+        [CB("Prompt injection defence"),
+         C("Implemented — system prompt hardening and XML tag message framing "
+           "prevent customer input from being treated as instructions."),
+         C("Same, with ongoing red-team testing as the model is updated.")],
+        [CB("API docs"),
+         C("Intentionally enabled on the demo deployment so reviewers can "
+           "inspect the API at /docs and /redoc. Will be disabled before "
+           "any production release."),
+         C("Disable by leaving ENABLE_DOCS unset — /docs, /redoc, and "
+           "/openapi.json return 404.")],
+        [CB("Error messages"),
+         C("Sanitised — internal details and raw LLM output never returned "
+           "to the frontend."),
+         C("Same — already correct.")],
         [CB("Rate limiting"),
          C("Not implemented."),
          C("Add via slowapi middleware with per-IP and per-agent-role limits.")],
@@ -609,20 +643,13 @@ def build_story(S):
          C("Not implemented."),
          C("All AI analyses and agent edits logged immutably with timestamp "
            "and user ID.")],
-        [CB("Secrets management"),
-         C("Environment variables via .env file."),
-         C("Secrets vault (e.g. AWS Secrets Manager or Railway environment "
-           "variable groups with restricted access).")],
         [CB("Human-in-the-loop"),
          C("Implemented — agents review and edit every response before submission."),
-         C("Same — this is a hard architectural requirement, not optional.")],
-        [CB("API key exposure"),
-         C("The LLM API key is server-side only, never sent to the frontend."),
-         C("Same — already correct.")],
+         C("Same — hard architectural requirement, not optional.")],
     ]
-    col1 = 3.0*cm
-    col2 = (TW - col1) * 0.44
-    col3 = (TW - col1) * 0.56
+    col1 = 3.2*cm
+    col2 = (TW - col1) * 0.46
+    col3 = (TW - col1) * 0.54
     story.append(make_table(sec_rows, [col1, col2, col3]))
     story.append(Spacer(1, 0.35*cm))
     story.append(CalloutBox(
