@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 from datetime import datetime
 
@@ -32,6 +32,17 @@ class AIAnalysis(BaseModel):
     risk_justification: str
     sentiment: str | None = None
     confidence_score: float | None = None
+
+    @field_validator("escalation_decision", mode="before")
+    @classmethod
+    def coerce_bool(cls, v):
+        """Accept string booleans the LLM occasionally returns ('true'/'false')."""
+        if isinstance(v, str):
+            if v.lower() == "true":
+                return True
+            if v.lower() == "false":
+                return False
+        return v
 
 
 class SupportResponse(BaseModel):

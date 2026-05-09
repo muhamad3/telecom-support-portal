@@ -28,9 +28,13 @@ async def analyze_ticket(request: SupportRequest):
     try:
         analysis = await ai_service.analyze_ticket(sanitized, rag_context)
     except Exception as exc:
+        # Log the full error server-side; return a safe message to the client
+        # so raw LLM output and internal details are never exposed.
+        import logging
+        logging.getLogger(__name__).error("AI analysis failed: %s", exc)
         raise HTTPException(
             status_code=502,
-            detail=f"AI service error: {exc}",
+            detail="The AI analysis service is temporarily unavailable. Please try again.",
         )
 
     return SupportResponse(
