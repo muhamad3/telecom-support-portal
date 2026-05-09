@@ -1,0 +1,12 @@
+{
+  "name": "TelcoAI Support Portal",
+  "short_name": "TelcoAI",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0066cc",
+  "description": "Enterprise GenAI Customer Support Portal",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": []
+}
