@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 
 from ..models.schemas import DatasetRecord, DatasetResponse
 from ..services import data_service
@@ -26,16 +26,3 @@ async def list_records(
         page=page,
         page_size=page_size,
     )
-
-
-@router.get(
-    "/records/{record_id}",
-    response_model=DatasetRecord,
-    summary="Get a single dataset record",
-    description="Returns a single customer support record by its ID.",
-)
-async def get_record(record_id: int):
-    record = data_service.get_record_by_id(record_id)
-    if not record:
-        raise HTTPException(status_code=404, detail="Record not found")
-    return record

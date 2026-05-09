@@ -157,7 +157,6 @@ Every customer support ticket goes through a full pipeline and returns:
 | POST | `/api/support/analyze` | Analyse a customer ticket with AI |
 | POST | `/api/support/submit` | Submit agent-edited response |
 | GET | `/api/dataset/records` | List dataset records (paginated, filterable) |
-| GET | `/api/dataset/records/{id}` | Get a single dataset record |
 
 Full details in [docs/api_overview.md](docs/api_overview.md).
 

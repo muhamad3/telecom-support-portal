@@ -132,20 +132,4 @@ class ApiService {
     }
   }
 
-  // -- Single Record ----------------------------------------------------------
-  static Future<DatasetRecord> getRecord(int id) async {
-    try {
-      final res = await http
-          .get(Uri.parse('$baseUrl/api/dataset/records/$id'))
-          .timeout(const Duration(seconds: 10));
-
-      if (res.statusCode == 200) {
-        return DatasetRecord.fromJson(
-            jsonDecode(res.body) as Map<String, dynamic>);
-      }
-      throw _errorFromResponse(res);
-    } on Exception catch (e) {
-      throw _friendlyError(e);
-    }
-  }
 }

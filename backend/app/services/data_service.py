@@ -89,11 +89,3 @@ def get_records(
     total = len(rows)
     start = (page - 1) * page_size
     return rows[start : start + page_size], total
-
-
-def get_record_by_id(record_id: int) -> DatasetRecord | None:
-    all_records = _load()
-    for r in all_records:
-        if r.id == record_id:
-            return r
-    return None

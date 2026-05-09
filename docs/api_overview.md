@@ -135,33 +135,6 @@ List customer support records from the dataset with filtering and pagination.
 }
 ```
 
----
-
-#### `GET /api/dataset/records/{record_id}`
-Get a single dataset record by ID.
-
-**Path Parameters**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `record_id` | int | The record ID (1-indexed) |
-
-**Response** `200 OK`
-```json
-{
-  "id": 1,
-  "issue_type": "Billing",
-  "message": "I have been charged twice for my monthly plan this month...",
-  "priority": "High"
-}
-```
-
-**Error Response** `404 Not Found`
-```json
-{
-  "detail": "Record not found"
-}
-```
 
 ---
 
